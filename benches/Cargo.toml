@@ -1,0 +1,15 @@
+[package]
+name = "benches"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+publish = false
+
+[[bench]]
+name = "all_days"
+harness = false
+
+[dependencies]
+aoc-lib = { path = "../aoc-lib" }
+criterion.workspace = true

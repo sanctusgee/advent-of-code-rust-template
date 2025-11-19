@@ -1,0 +1,458 @@
+# Advent of Code Template (Rust)
+
+A scalable, high-performance Advent of Code solution framework built with Rust workspaces. This template provides everything you need to tackle any year's puzzles with a clean architecture, automatic input downloading, benchmarking, and more.
+
+## What's Included
+
+- Year-agnostic template - Works for 2024, 2025, and beyond
+- Minimal codebase - Just 9 Rust files to get you started
+- Example solution - year2024/day01 as a reference (removable)
+- Automatic input downloading - No manual copy-paste
+- Template generator - Create new days with one command
+- Benchmarking suite - Measure and optimize performance
+- Utility functions - Common parsing and input handling
+- Workspace architecture - Fast incremental builds
+- Zero clippy warnings - Clean, idiomatic Rust code
+
+## Quick Start
+
+### Initial Setup
+
+```bash
+# 1. Build the project
+cargo build
+
+# 2. Set your session cookie for auto-downloading inputs
+export AOC_SESSION="your_session_cookie_here"
+
+# 3. Download input for the example solution (year2024/day01)
+cargo run --bin aoc download 2024 1
+
+# 4. Verify it works
+cargo run --bin aoc run 2024 1
+```
+
+**Important**: This template does not include puzzle inputs. Per [Advent of Code's policy](https://adventofcode.com/about), puzzle inputs should not be shared in public repositories. You must download your own inputs using your session cookie.
+
+**How to get your session cookie:**
+1. Log in to https://adventofcode.com
+2. Open browser DevTools (F12)
+3. Go to Application/Storage > Cookies
+4. Copy the value of the `session` cookie
+
+### First Time Adding a Year
+
+When you start a new year, you need to register it in `aoc-lib/src/lib.rs`:
+
+```rust
+// 1. Add module declaration (top of file)
+pub mod year2025;
+
+// 2. Add to get_solver() match
+2025 => Self::get_year_solver(year2025::DAYS, day),
+
+// 3. Add to available_years()
+vec![2024, 2025]
+
+// 4. Add to available_days() match
+2025 => &year2025::DAYS,
+```
+
+The `new-day` script will remind you of these steps when you create day 1 of a new year.
+
+### Daily Workflow (Adding New Days)
+
+Once your year is set up, adding new days is simple:
+
+```bash
+# Create template for a new day
+cargo run --bin new-day 2025 1
+
+# Download input (auto-cached)
+cargo run --bin aoc download 2025 1
+
+# Edit your solution
+# File: aoc-lib/src/year2025/day01.rs
+
+# Run it
+cargo run --bin aoc run 2025 1
+
+# Run tests
+cargo test day01
+
+# Benchmark (optional)
+cargo bench 2025/day01
+```
+
+## Project Architecture
+
+This project uses a workspace-based architecture optimized for scalability and build performance:
+
+```
+advent-of-code/
+├── aoc-lib/              # Solution library (all puzzle implementations)
+│   ├── src/
+│   │   ├── utils/        # Shared utilities
+│   │   │   ├── input.rs      # Input handling & downloading
+│   │   │   └── output.rs     # Standardized output formatting
+│   │   ├── year2024/     # 2024 solutions (day01-day25)
+│   │   ├── year20XX/     # 20XX solutions (day01-day25)
+│   │   └── lib.rs        # Solution registry
+│   └── Cargo.toml
+├── aoc/                  # CLI binary
+│   ├── src/
+│   │   ├── main.rs           # Main CLI interface
+│   │   └── bin/
+│   │       └── new-day.rs    # Template generator
+│   └── Cargo.toml
+├── benches/              # Criterion benchmarks
+│   ├── benches/
+│   │   └── all_days.rs
+│   └── Cargo.toml
+└── input/                # Puzzle inputs
+    └── year2024/
+        └── day01.txt
+    └── year20XX/
+        └── dayXX.txt
+```
+
+### Why This Architecture?
+
+- **Scalability**: Solutions as a library scale indefinitely - add years without restructuring
+- **Build Performance**: Workspace enables parallel compilation and incremental builds
+- **Flexibility**: Run via CLI, benchmarks, or import as library
+- **CI/CD Efficiency**: Test/bench only what changed
+- **Separation of Concerns**: Logic (lib) vs CLI (bin) vs performance (bench)
+- **Year-Agnostic**: Template works for any year - 2024, 2025, 2030, or beyond
+
+### Minimal Codebase - Just 9 Files
+
+The template includes only essential code to get you started:
+
+1. `aoc-lib/src/lib.rs` - Solution registry and type definitions
+2. `aoc-lib/src/year2024.rs` - Year module (example)
+3. `aoc-lib/src/year2024/day01.rs` - Example solution implementation
+4. `aoc-lib/src/utils/mod.rs` - Utility module exports
+5. `aoc-lib/src/utils/input.rs` - Input loading and downloading
+6. `aoc-lib/src/utils/output.rs` - Output formatting helpers
+7. `aoc/src/main.rs` - CLI interface (run, list, download)
+8. `aoc/src/bin/new-day.rs` - Template generator for new days
+9. `benches/benches/all_days.rs` - Benchmark suite
+
+No code bloat or unnecessary abstractions, only what you need to start solving puzzles.
+
+## Solution Template
+
+The template generator creates solutions with this pattern, but you can organize your code however you prefer. The only requirement is a public `solve()` function with this signature:
+
+```rust
+pub fn solve() -> anyhow::Result<()>
+```
+
+Here's the suggested pattern (generated by `new-day`):
+
+```rust
+use crate::utils;
+use anyhow::Result;
+
+pub fn solve() -> Result<()> {
+    let input = utils::load_input(2025, 1)?;
+    
+    let part1 = solve_part1(&input)?;
+    let part2 = solve_part2(&input)?;
+    
+    println!("Day 1 / Year 2025");
+    println!("Part 1: {}", part1);
+    println!("Part 2: {}", part2);
+    
+    Ok(())
+}
+
+fn solve_part1(input: &str) -> Result<impl std::fmt::Display> {
+    // Your solution here
+    Ok(0)
+}
+
+fn solve_part2(input: &str) -> Result<impl std::fmt::Display> {
+    // Your solution here
+    Ok(0)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    
+    const EXAMPLE: &str = "paste example input here";
+    
+    #[test]
+    fn test_part1() {
+        assert_eq!(solve_part1(EXAMPLE).unwrap().to_string(), "expected");
+    }
+    
+    #[test]
+    fn test_part2() {
+        assert_eq!(solve_part2(EXAMPLE).unwrap().to_string(), "expected");
+    }
+}
+```
+
+Feel free to modify this structure - add helper functions, use different error handling, organize into modules, etc. The framework doesn't enforce any particular style beyond the `solve()` function signature.
+
+**Why do I like anyhow?** The `anyhow` crate provides better error messages with context, making debugging easier. It's the idiomatic choice for application-level error handling in Rust.
+
+## Utility Functions
+
+The template includes common utility functions in `aoc-lib/src/utils/`:
+
+### Input Handling
+
+```rust
+use crate::utils;
+
+// Load input as string
+let input = utils::load_input(2025, 1)?;
+
+// Load input as lines
+let lines = utils::load_input_lines(2025, 1)?;
+
+// Ensure input exists (download if needed)
+let input = utils::ensure_input(2025, 1)?;
+
+// Parse lines with delimiter (e.g., "value: 1 2 3")
+let data: Vec<(u64, Vec<u64>)> =
+    utils::parse_lines_with_delimiter(&lines, ":")?;
+
+// Parse lines of whitespace-separated values
+let data: Vec<Vec<i32>> = utils::parse_lines(&lines)?;
+```
+
+## Commands Reference
+
+### Creating Solutions
+
+```bash
+# Generate template for a new day
+cargo run --bin new-day <year> <day>
+
+# Example: Create day 5 of 2025
+cargo run --bin new-day 2025 5
+```
+
+### Running Solutions
+
+```bash
+# Run a specific day
+cargo run --bin aoc run <year> <day>
+
+# Run with optimizations (for slow solutions)
+cargo run --release --bin aoc run <year> <day>
+
+# List all available solutions
+cargo run --bin aoc list
+
+# List solutions for a specific year
+cargo run --bin aoc list <year>
+```
+
+### Input Management
+
+```bash
+# Download input for a specific day (requires AOC_SESSION)
+cargo run --bin aoc download <year> <day>
+
+# Example: Download day 10 of 2025
+cargo run --bin aoc download 2025 10
+```
+
+### Testing
+
+```bash
+# Run all tests
+cargo test
+
+# Run tests for a specific day
+cargo test day05
+
+# Run tests for a specific year
+cargo test --package aoc-lib year2024
+```
+
+### Benchmarking
+
+```bash
+# Benchmark all solutions
+cargo bench
+
+# Benchmark specific year
+cargo bench 2025
+
+# Benchmark specific day
+cargo bench 2025/day05
+
+# Results saved to target/criterion/report/index.html
+```
+
+## Build Profiles
+
+```bash
+# Debug build (fast compilation, slow execution)
+cargo build
+
+# Release build (slow compilation, optimized execution)
+cargo build --release
+
+# Run with release optimizations
+cargo run --release --bin aoc run 2025 1
+```
+
+Typical build times:
+- Clean debug build: ~30s
+- Incremental debug: <3s
+- Clean release build: ~90s
+- Incremental release: <10s
+
+## Dependencies
+
+### Required
+- `anyhow`: Error handling with context
+- `clap`: Command-line argument parsing
+- `colored`: Terminal output coloring
+- `reqwest`: HTTP client for input downloading
+- `criterion`: Statistical benchmarking
+
+### Optional (Available but Commented Out)
+
+The crates below are commonly used for Advent of Code but not included by default. Uncomment in `aoc-lib/Cargo.toml` as needed:
+
+- `regex`: Pattern matching and text parsing
+- `itertools`: Extended iterator utilities
+- `ahash`: Fast hashing (AHashMap/AHashSet) - faster than std HashMap
+- `atoi`: Fast integer parsing from byte slices
+- `once_cell`: Lazy static initialization
+
+To enable any of these, uncomment the line in `aoc-lib/Cargo.toml`:
+```toml
+# regex.workspace = true  # Remove the # to enable
+```
+
+## Customization
+
+### Removing the Example
+
+This template includes `year2024/day01` as a working reference. To remove it:
+
+```bash
+# Remove the example files
+rm -rf aoc-lib/src/year2024
+rm -rf input/year2024
+
+# Edit aoc-lib/src/lib.rs and remove:
+# - pub mod year2024;
+# - The 2024 case in get_solver()
+# - 2024 from available_years()
+# - The 2024 case in available_days()
+```
+
+Or keep it as a reference while you build your own solutions.
+
+### Adding Custom Utilities
+
+Add helper functions to `aoc-lib/src/utils/` and they're available everywhere:
+
+```rust
+// In aoc-lib/src/utils/mod.rs
+pub mod input;
+pub mod output;
+pub mod my_helpers;  // Your custom utilities
+
+pub use input::*;
+pub use output::*;
+pub use my_helpers::*;
+```
+
+### Starting Fresh
+
+It's recommended you view the examples. If you want to start completely clean without the example:
+
+```bash
+# Remove the example year
+rm -rf aoc-lib/src/year2024
+rm -rf input/year2024
+
+# Edit aoc-lib/src/lib.rs to remove year2024 references
+# Then create your first year
+cargo run --bin new-day 2025 1
+```
+
+## Troubleshooting
+
+### "No solution found for year X day Y"
+
+Make sure you've:
+1. Created the solution file with `new-day`
+2. Added the year module to `lib.rs` (for new years)
+3. The solution compiles without errors
+
+### Input download fails
+
+Check that:
+1. `AOC_SESSION` environment variable is set
+2. The session cookie is still valid (they expire)
+3. The puzzle has been released (available at midnight EST)
+
+### Compilation errors after adding a year
+
+Verify you've updated all four places in `lib.rs`:
+1. Module declaration (`pub mod yearXXXX;`)
+2. `get_solver()` match arm
+3. `available_years()` vec
+4. `available_days()` match arm
+
+### Slow compilation
+
+The workspace architecture provides incremental builds. If you're experiencing slow builds:
+- Use `cargo build` for development (faster compilation)
+- Use `cargo build --release` only when you need optimized performance
+- Consider using `cargo check` for quick syntax validation
+
+## Tips for Success
+
+1. **Start with the example**: Study `aoc-lib/src/year2024/day01.rs` to understand the pattern
+2. **Use utilities**: Check `aoc-lib/src/utils/` for helpful parsing functions
+3. **Test with examples**: Add the puzzle's example input to your tests
+4. **Get it working first**: Optimize later with benchmarks
+5. **Commit often**: Each day is independent, commit after solving each one
+6. **Use the CLI**: The template generator handles boilerplate for you
+
+## Performance
+
+The workspace architecture provides:
+- **Incremental builds**: Only changed crates rebuild
+- **Parallel compilation**: Multiple crates compile simultaneously
+- **Optimized dependencies**: Shared dependencies compile once
+
+Use benchmarks to identify bottlenecks:
+```bash
+cargo bench
+# Open target/criterion/report/index.html to view results
+```
+
+## Resources
+
+- [Advent of Code](https://adventofcode.com)
+- [Rust Documentation](https://doc.rust-lang.org/)
+- [Cargo Workspaces](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html)
+- [Criterion Benchmarking](https://github.com/bheisler/criterion.rs)
+
+## Contributing
+
+Found a bug or have an improvement? Contributions are welcome! Please open issues or pull requests.
+
+## License
+
+This project is open-sourced under the MIT License.
+
+---
+
+May your code compile on the first try! Go get those AoC stars!
+
