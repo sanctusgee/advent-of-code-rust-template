@@ -83,7 +83,7 @@ Updating `lib.rs` is a manual step so you can control ordering and visibility.
 
 ### Next day
 
-    cargo run - bin new-day 2025 2
+    cargo run - bin new-day 2025 2 // change the day value as needed
 
 Use the same command pattern for each new day.
 
@@ -91,7 +91,7 @@ Use the same command pattern for each new day.
 
 ## Download Inputs
 
-    cargo run - bin aoc download 2025 1
+    cargo run - bin aoc download 2025 1 // change the day value as needed
 
 Inputs are stored under:
 
@@ -103,7 +103,7 @@ They’re ignored by Git by default so you won’t commit personal data.
 
 ## Run a Solution
 
-    cargo run - bin aoc run 2025 1
+    cargo run - bin aoc run 2025 1 // change the day value as needed
 
 List available solvers:
 
