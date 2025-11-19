@@ -4,18 +4,16 @@
 [![Rust](https://img.shields.io/badge/rust-1.75%2B-orange.svg)](https://www.rust-lang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-After finishing AoC 2024, I turned my solution setup into a reusable template. Most templates are either too minimal or overly complex. This one uses Rust workspaces, auto-downloads inputs, generates new days with one command, and includes benchmarking. Just 9 files total.
-
+After finishing AoC 2024, I turned my solution setup into a reusable template. Most templates are either too minimal or overly complex. This one uses Rust workspaces, auto-downloads inputs, generates new days with one command, and includes benchmarking.
 
 ## What you get
 
-- 9 Rust files (no bloat)
-- Works for any year (2024, 2025, whatever)
+- Just 9 Rust files (no bloat)
+- Works for any year
 - One example solution to see the pattern
 - Auto-downloads puzzle inputs
 - One command to create new days
 - Criterion benchmarks included
-- Workspace setup for fast builds
 - Passes clippy with zero warnings
 
 ## Quick Start
@@ -46,46 +44,40 @@ cargo run --bin aoc run 2024 1
 
 ### First Time Adding a Year
 
-When you start a new year, you need to register it in `aoc-lib/src/lib.rs`:
-
-```rust
-// 1. Add module declaration (top of file)
-pub mod year2025;
-
-// 2. Add to get_solver() match
-2025 => Self::get_year_solver(year2025::DAYS, day),
-
-// 3. Add to available_years()
-vec![2024, 2025]
-
-// 4. Add to available_days() match
-2025 => &year2025::DAYS,
-```
-
-The `new-day` script will remind you of these steps when you create day 1 of a new year.
-
-### Daily Workflow (Adding New Days)
-
-Once your year is set up, adding new days is simple:
-
 ```bash
-# Create template for a new day
+# 1. Create day 1 of the new year
 cargo run --bin new-day 2025 1
 
-# Download input (auto-cached)
+# 2. Register the year in aoc-lib/src/lib.rs (the script will remind you):
+#    - Add: pub mod year2025;
+#    - Add to get_solver(): 2025 => Self::get_year_solver(year2025::DAYS, day),
+#    - Add to available_years(): vec![2024, 2025]
+#    - Add to available_days(): 2025 => &year2025::DAYS,
+
+# 3. Download input
 cargo run --bin aoc download 2025 1
 
-# Edit your solution
-# File: aoc-lib/src/year2025/day01.rs
+# 4. Edit your solution: aoc-lib/src/year2025/day01.rs
+
+# 5. Run it
+cargo run --bin aoc run 2025 1
+```
+
+### Daily Workflow
+
+For subsequent days (day 2, 3, 4, etc.):
+
+```bash
+# Create template
+cargo run --bin new-day 2025 2
+
+# Download input
+cargo run --bin aoc download 2025 2
+
+# Edit: aoc-lib/src/year2025/day02.rs
 
 # Run it
-cargo run --bin aoc run 2025 1
-
-# Run tests
-cargo test day01
-
-# Benchmark (optional)
-cargo bench 2025/day01
+cargo run --bin aoc run 2025 2
 ```
 
 ## Project Architecture
@@ -120,33 +112,9 @@ advent-of-code/
         └── dayXX.txt
 ```
 
-### Why workspace architecture?
+### Why workspaces?
 
-Take a look at The Rust Book at https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html
-
-The workspace setup gives you a few things:
-
-- Add new years without restructuring everything
-- Fast incremental builds (only changed files recompile)
-- Run solutions from CLI, benchmark them, or import as a library
-- Solutions live in a library, CLI is just a thin wrapper
-- Works for any AoC year (2024, 2025, whenever)
-
-### Minimal Codebase - Just 9 Files
-
-The template includes only essential code to get you started:
-
-1. `aoc-lib/src/lib.rs` - Solution registry and type definitions
-2. `aoc-lib/src/year2024.rs` - Year module (example)
-3. `aoc-lib/src/year2024/day01.rs` - Example solution implementation
-4. `aoc-lib/src/utils/mod.rs` - Utility module exports
-5. `aoc-lib/src/utils/input.rs` - Input loading and downloading
-6. `aoc-lib/src/utils/output.rs` - Output formatting helpers
-7. `aoc/src/main.rs` - CLI interface (run, list, download)
-8. `aoc/src/bin/new-day.rs` - Template generator for new days
-9. `benches/benches/all_days.rs` - Benchmark suite
-
-No code bloat or unnecessary abstractions, only what you need to start solving puzzles.
+The workspace setup provides fast incremental builds (only changed files recompile), lets you run solutions from CLI or benchmark them, and makes adding new years simple. Solutions live in a library, CLI is just a thin wrapper. See [The Rust Book](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html) for details.
 
 ## Solution Template
 
@@ -299,24 +267,7 @@ cargo bench 2025/day05
 # Results saved to target/criterion/report/index.html
 ```
 
-## Build Profiles
 
-```bash
-# Debug build (fast compilation, slow execution)
-cargo build
-
-# Release build (slow compilation, optimized execution)
-cargo build --release
-
-# Run with release optimizations
-cargo run --release --bin aoc run 2025 1
-```
-
-Typical build times:
-- Clean debug build: ~30s
-- Incremental debug: <3s
-- Clean release build: ~90s
-- Incremental release: <10s
 
 ## Dependencies
 
@@ -346,54 +297,26 @@ To enable any of these, uncomment the line in `aoc-lib/Cargo.toml`:
 
 ### Removing the Example
 
-This template includes `year2024/day01` as a working reference. To remove it:
+This template includes `year2024/day01` as a working reference. To start fresh:
 
 ```bash
-# Remove the example files
-rm -rf aoc-lib/src/year2024
-rm -rf input/year2024
-
-# Edit aoc-lib/src/lib.rs and remove:
-# - pub mod year2024;
-# - The 2024 case in get_solver()
-# - 2024 from available_years()
-# - The 2024 case in available_days()
+rm -rf aoc-lib/src/year2024 input/year2024
 ```
 
-Or keep it as a reference while you build your own solutions.
+Then edit `aoc-lib/src/lib.rs` and remove the year2024 references (module declaration, get_solver case, available_years, available_days).
 
 ### Adding Custom Utilities
 
-Add helper functions to `aoc-lib/src/utils/` and they're available everywhere:
+Add helper functions to `aoc-lib/src/utils/` and export them in `mod.rs`:
 
 ```rust
-// In aoc-lib/src/utils/mod.rs
-pub mod input;
-pub mod output;
-pub mod my_helpers;  // Your custom utilities
-
-pub use input::*;
-pub use output::*;
+pub mod my_helpers;
 pub use my_helpers::*;
-```
-
-### Starting Fresh
-
-It's recommended you view the examples. If you want to start completely clean without the example:
-
-```bash
-# Remove the example year
-rm -rf aoc-lib/src/year2024
-rm -rf input/year2024
-
-# Edit aoc-lib/src/lib.rs to remove year2024 references
-# Then create your first year
-cargo run --bin new-day 2025 1
 ```
 
 ## Troubleshooting
 
-### "No solution found for year X day Y"
+### No solution found for year X day Y
 
 Make sure you've:
 1. Created the solution file with `new-day`
@@ -407,57 +330,21 @@ Check that:
 2. The session cookie is still valid (they expire)
 3. The puzzle has been released (available at midnight EST)
 
-### Compilation errors after adding a year
-
-Verify you've updated all four places in `lib.rs`:
-1. Module declaration (`pub mod yearXXXX;`)
-2. `get_solver()` match arm
-3. `available_years()` vec
-4. `available_days()` match arm
-
 ### Slow compilation
 
-The workspace architecture provides incremental builds. If you're experiencing slow builds:
-- Use `cargo build` for development (faster compilation)
-- Use `cargo build --release` only when you need optimized performance
-- Consider using `cargo check` for quick syntax validation
+Use `cargo build` for development (fast), `cargo build --release` only when you need speed, or `cargo check` for quick validation.
 
-## Tips for Success
+## Tips
 
-1. **Start with the example**: Study `aoc-lib/src/year2024/day01.rs` to understand the pattern
-2. **Use utilities**: Check `aoc-lib/src/utils/` for helpful parsing functions
-3. **Test with examples**: Add the puzzle's example input to your tests
-4. **Get it working first**: Optimize later with benchmarks
-5. **Commit often**: Each day is independent, commit after solving each one
-6. **Use the CLI**: The template generator handles boilerplate for you
-
-## Performance
-
-The workspace architecture provides:
-- **Incremental builds**: Only changed crates rebuild
-- **Parallel compilation**: Multiple crates compile simultaneously
-- **Optimized dependencies**: Shared dependencies compile once
-
-Use benchmarks to identify bottlenecks:
-```bash
-cargo bench
-# Open target/criterion/report/index.html to view results
-```
-
-## Resources
-
-- [Advent of Code](https://adventofcode.com)
-- [Rust Documentation](https://doc.rust-lang.org/)
-- [Cargo Workspaces](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html)
-- [Criterion Benchmarking](https://github.com/bheisler/criterion.rs)
-
-## Contributing
-
-Found a bug or have an improvement? Contributions are welcome! Please open issues or pull requests.
+1. Study the example: `aoc-lib/src/year2024/day01.rs`
+2. Check `aoc-lib/src/utils/` for parsing helpers
+3. Test with puzzle examples first
+4. Get it working, then optimize with benchmarks
+5. Commit after each day
 
 ## License
 
-This project is open-sourced under the MIT License.
+MIT License - see LICENSE.md
 
 ---
 
