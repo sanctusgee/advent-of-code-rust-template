@@ -1,6 +1,5 @@
 pub mod input;
 pub mod output;
-// pub mod legacy;
 
 // Re-export commonly used items
 pub use input::{
@@ -9,9 +8,3 @@ pub use input::{
 };
 pub use output::SolutionOutput;
 
-// // Re-export legacy functions for backward compatibility
-// #[allow(deprecated)]
-// pub use legacy::{
-//     get_input_file_path, load_file_data, process_lines_without_delimiter,
-//     read_input, split_lines_by_delimiter,
-// };
