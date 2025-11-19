@@ -2,7 +2,6 @@
 
 A scalable, high-performance Advent of Code solution framework built with Rust workspaces. This template provides everything you need to tackle any year's puzzles with a clean architecture, automatic input downloading, benchmarking, and more.
 
-Blog at https://medium.com/@godwin.dsg/building-a-minimal-advent-of-code-template-353164969d4f
 
 ## What's Included
 
