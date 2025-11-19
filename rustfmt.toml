@@ -1,0 +1,6 @@
+# rustfmt.toml
+max_width = 80         # Wrap code at 80 characters
+hard_tabs = false      # Use spaces instead of tabs
+tab_spaces = 4         # Number of spaces for indentation
+#use_field_init_shorthand = true # Use field init shorthand when possible
+reorder_imports = true # Automatically sort imports

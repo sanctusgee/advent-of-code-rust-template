@@ -1,0 +1,9 @@
+[package]
+name = "registry-tool"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+anyhow.workspace = true

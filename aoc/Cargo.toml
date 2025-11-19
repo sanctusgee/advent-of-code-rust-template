@@ -1,0 +1,16 @@
+[package]
+name = "aoc"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+
+[[bin]]
+name = "aoc"
+path = "src/main.rs"
+
+[dependencies]
+aoc-lib = { path = "../aoc-lib" }
+anyhow.workspace = true
+clap.workspace = true
+colored.workspace = true

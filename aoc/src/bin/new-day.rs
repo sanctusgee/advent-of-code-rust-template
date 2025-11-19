@@ -1,0 +1,355 @@
+//  aoc/src/bin/new-day.rs
+
+// Purpose:
+// - Generate a new day solution stub at `aoc-lib/src/yearYYYY/dayDD.rs`
+// - Register the day in `aoc-lib/src/yearYYYY/mod.rs` by:
+//     * adding `mod dayDD;` once,
+
+use anyhow::{anyhow, Context, Result};
+use std::fs;
+use std::path::PathBuf;
+
+fn main() -> Result<()> {
+    // Expect: cargo run --bin new-day <year> <day>
+    let mut args = std::env::args().skip(1).collect::<Vec<_>>();
+    if args.len() != 2 {
+        anyhow::bail!("Usage: cargo run --bin new-day <year> <day>");
+    }
+    let year: u16 = args.remove(0).parse().context("invalid year")?;
+    let day: u8 = args.remove(0).parse().context("invalid day")?;
+
+    // Validate year range
+    if !(2015..=2099).contains(&year) {
+        anyhow::bail!("Year must be between 2015 and 2099 (Advent of Code years)");
+    }
+
+    // Sanity check day range
+    // ToDo: hardcoded: Starting 2025, AoC is now only 12 days
+    //       intentionally leaving range of 1 to 25 so we can still use code for previous years
+    //     **  In future, I'll figure out a way to create a dynamic variable
+    //      that is set as part of the Day 1 template creation
+    if !(1..=25).contains(&day) {
+        anyhow::bail!("Day must be between 1 and 25");
+    }
+
+    // Create per-year day file path and parent directories
+    let solution_path = solution_rs_path(year, day);
+    if solution_path.exists() {
+        println!(
+            "Solution file already exists for year {} day {}: {}",
+            year,
+            day,
+            solution_path.display()
+        );
+        return Ok(());
+    }
+
+    if let Some(parent) = solution_path.parent() {
+        fs::create_dir_all(parent)
+            .with_context(|| format!("failed to create directory {}", parent.display()))?;
+    }
+
+    // Write a minimal day stub
+    fs::write(&solution_path, build_day_stub(year, day))
+        .with_context(|| format!("failed to write {}", solution_path.display()))?;
+
+    // Create input directory and empty input file for the new day
+    let input_dir = PathBuf::from(format!("input/year{}", year));
+    fs::create_dir_all(&input_dir)
+        .with_context(|| format!("failed to create input directory {}", input_dir.display()))?;
+
+    let input_path = input_dir.join(format!("day{:02}.txt", day));
+    if !input_path.exists() {
+        fs::write(&input_path, "")
+            .with_context(|| format!("failed to create input file {}", input_path.display()))?;
+    }
+
+    // Register in `yearYYYY/mod.rs`
+    register_new_day(year, day)?;
+
+    // Regenerate the solution registry (this also updates lib.rs)
+    println!("\nRegenerating solution registry...");
+    let status = std::process::Command::new("cargo")
+        .args(["run", "--bin", "registry-tool"])
+        .status()
+        .context("Failed to run registry-tool")?;
+    
+    if !status.success() {
+        anyhow::bail!("registry-tool failed");
+    }
+
+    // User guidance
+    println!("\nCreated template for year {} day {}", year, day);
+    println!("\nNext steps:");
+    println!("  1. Download input or Copy/paste input to: input/year{}/day{:02}.txt", year, day);
+    println!(
+        "  2. Implement solution in: aoc-lib/src/year{}/day{:02}.rs",
+        year, day
+    );
+    println!("  3. Run with: cargo run --bin aoc run {} {}", year, day);
+
+    Ok(())
+}
+
+// Build the per-year, per-day file location: `aoc-lib/src/yearYYYY/dayDD.rs`
+fn solution_rs_path(year: u16, day: u8) -> PathBuf {
+    PathBuf::from(format!("aoc-lib/src/year{}/day{:02}.rs", year, day))
+}
+
+// Build the per-year module path: `aoc-lib/src/yearYYYY/mod.rs`
+fn year_mod_path(year: u16) -> PathBuf {
+    PathBuf::from(format!("aoc-lib/src/year{}/mod.rs", year))
+}
+
+// Create or update the per-year `mod.rs` to register the new day.
+fn register_new_day(year: u16, day: u8) -> Result<()> {
+    let path = year_mod_path(year);
+
+    // If the year module does not exist yet, scaffold it with the first day
+    if !path.exists() {
+        let scaffold = build_year_scaffold(year, day);
+        if let Some(parent) = path.parent() {
+            fs::create_dir_all(parent)
+                .with_context(|| format!("failed to create directory {}", parent.display()))?;
+        }
+        fs::write(&path, scaffold)
+            .with_context(|| format!("failed to create {}", path.display()))?;
+        return Ok(());
+    }
+
+    // Read current content and integrate the new day entry
+    let src = fs::read_to_string(&path)
+        .with_context(|| format!("failed to read {}", path.display()))?;
+    let updated = integrate_day_into_year_file(&src, day)
+        .with_context(|| format!("failed to update {}", path.display()))?;
+
+    // Write back only if changes occurred
+    if updated != src {
+        fs::write(&path, updated)
+            .with_context(|| format!("failed to write {}", path.display()))?;
+    }
+    Ok(())
+}
+
+// Initial scaffold for a new year module file `yearYYYY/mod.rs`
+fn build_year_scaffold(year: u16, day: u8) -> String {
+    let day_mod = format!("mod day{:02};", day);
+    let entry = format!("    (\"{}\", day{:02}::solve),", day, day);
+    format!(
+        "// Auto-generated by new-day tool. No edit required\n\
+         // Year {year}\n\
+         \n\
+         use anyhow::Result;\n\
+         \n\
+         {day_mod}\n\
+         \n\
+         \n\
+         pub const DAYS: &[(&str, fn() -> Result<()>)] =\n\
+         &[\n\
+         {entry}\n\
+         ];\n"
+    )
+}
+
+// Minimal content for a new `dayDD.rs` file
+fn build_day_stub(year: u16, day: u8) -> String {
+    format!(
+        "// Auto-generated day stub. Do not delete solve()\n\
+         // Add you code to solve(), or implement other fn and call from solve().\n\n\
+         use anyhow::Result;\n\
+         use crate::utils;\n\
+         \n\n\
+         // Example template.\n\n\
+         pub fn solve() -> Result<()> {{\n\
+         // Load your input file.\n\
+         \tlet input = utils::load_input({}, {})?;\n\
+         \n\
+         \tlet part1 = solve_part1(&input)?;\n\
+         \tlet part2 = solve_part2(&input)?;\n\
+         \n\
+         \tprintln!(\"Day {} / Year {}\");\n\
+         \tprintln!(\"Part 1: {{}}\", part1);\n\
+         \tprintln!(\"Part 2: {{}}\", part2);\n\
+         \n\
+         \tOk(())\n\
+         }}\n\
+         \n\
+        // Rename _input variable in fn signature back to input after implementing the solution\n\
+         fn solve_part1(_input: &str) -> Result<impl std::fmt::Display> {{\n\
+         \tOk(0)\n\
+         }}\n\
+         \n\
+        // Rename _input variable in fn signature back to input after implementing the solution\n\
+         fn solve_part2(_input: &str) -> Result<impl std::fmt::Display> {{\n\
+         \tOk(0)\n\
+         }}\n",
+        year, day, day, year
+    )
+}
+
+
+// Integrate the new day into an existing `yearYYYY/mod.rs`
+fn integrate_day_into_year_file(src: &str, day: u8) -> Result<String> {
+    let mut lines = src.lines().map(|s| s.to_string()).collect::<Vec<_>>();
+    let mod_line = format!("mod day{:02};", day);
+    let tuple_line = format!("    (\"{}\", day{:02}::solve),", day, day);
+
+    // Add `mod dayDD;` if not already present
+    if !lines.iter().any(|l| l.trim() == mod_line) {
+        let insert_idx = last_mod_index(&lines).map(|i| i + 1).unwrap_or(0);
+        lines.insert(insert_idx, mod_line);
+    }
+
+    // Normalize spacing: exactly two blank lines before `pub const DAYS`
+    lines = normalize_mod_days_spacing(lines);
+
+    // Locate DAYS header and opening `&[`
+    let (_days_header_idx, open_idx) = find_days_open(&lines)
+        .ok_or_else(|| anyhow!("could not locate DAYS array opening"))?;
+
+    // Locate closing `];` (if split, merge first)
+    let mut close_idx = find_days_close(&lines, open_idx);
+    if close_idx.is_none() {
+        merge_split_closing(&mut lines);
+        close_idx = find_days_close(&lines, open_idx);
+    }
+    let close_idx = close_idx.ok_or_else(|| anyhow!("could not locate DAYS array closing '];'"))?;
+
+    // Insert the tuple just above the closing `];` if not already present
+    let already_present = lines[(open_idx + 1)..close_idx]
+        .iter()
+        .any(|l| l.trim() == tuple_line);
+    if !already_present {
+        lines.insert(close_idx, tuple_line);
+    }
+
+    Ok(lines.join("\n") + "\n")
+}
+
+// Fix inserting ("DD", dayDD::solve), right before the closing `];` of DAYS,
+// Find the last `mod dayNN;` line index
+fn last_mod_index(lines: &[String]) -> Option<usize> {
+    lines
+        .iter()
+        .enumerate()
+        .filter_map(|(i, l)| {
+            let t = l.trim();
+            if t.starts_with("mod day") && t.ends_with(';') {
+                Some(i)
+            } else {
+                None
+            }
+        })
+        .next_back()
+}
+
+// Find `pub const DAYS` header and the line index containing `&[`
+fn find_days_open(lines: &[String]) -> Option<(usize, usize)> {
+    let header = lines.iter().position(|l| l.contains("pub const DAYS"))?;
+    if lines[header].contains("&[") {
+        Some((header, header))
+    } else {
+        for (j, line) in lines.iter().enumerate().skip(header + 1) {
+            if line.contains("&[") {
+                return Some((header, j));
+            }
+            if !line.trim().is_empty() {
+                continue;
+            }
+        }
+        None
+    }
+}
+
+// Find closing `];` index, allowing for spaces/newlines between `]` and `;`
+fn find_days_close(lines: &[String], from: usize) -> Option<usize> {
+    let mut i = from;
+    while i < lines.len() {
+        let line = lines[i].trim();
+
+        if line.contains("];") {
+            return Some(i);
+        }
+
+        if let Some(bracket_pos) = line.find(']') {
+            if line[bracket_pos + 1..].contains(';') {
+                return Some(i);
+            }
+
+            let mut j = i + 1;
+            while j < lines.len() && lines[j].trim().is_empty() {
+                j += 1;
+            }
+            if j < lines.len() && lines[j].trim().contains(';') {
+                return Some(i);
+            }
+        }
+
+        i += 1;
+    }
+    None
+}
+
+// Normalize any closing formed by `]` then optional whitespace/newlines then `;`
+// into a single `];` line at the position of the `]`.
+fn merge_split_closing(lines: &mut Vec<String>) {
+    let mut i = 0;
+    while i < lines.len() {
+        if let Some(bracket_pos) = lines[i].find(']') {
+            // `;` on same line
+            if lines[i][bracket_pos + 1..].contains(';') {
+                lines[i] = "];".to_string();
+                i += 1;
+                continue;
+            }
+
+            // Look ahead for `;` on next non-empty line
+            let mut j = i + 1;
+            while j < lines.len() && lines[j].trim().is_empty() {
+                j += 1;
+            }
+            if j < lines.len() && lines[j].trim().contains(';') {
+                lines[i] = "];".to_string();
+                for _ in i + 1..=j {
+                    lines.remove(i + 1);
+                }
+                continue;
+            }
+        }
+
+        i += 1;
+    }
+}
+
+// Ensure exactly two blank lines between the last `mod dayNN;` and `pub const DAYS`
+fn normalize_mod_days_spacing(mut lines: Vec<String>) -> Vec<String> {
+    let last_mod_idx = lines
+        .iter()
+        .enumerate()
+        .filter_map(|(i, l)| {
+            let t = l.trim();
+            if t.starts_with("mod day") && t.ends_with(';') {
+                Some(i)
+            } else {
+                None
+            }
+        })
+        .next_back();
+
+    let pub_idx = lines.iter().position(|l| l.contains("pub const DAYS"));
+
+    if let (Some(m), Some(p)) = (last_mod_idx, pub_idx) {
+        let mut i = m + 1;
+        while i < p {
+            if lines[i].trim().is_empty() {
+                lines.remove(i);
+            } else {
+                i += 1;
+            }
+        }
+        lines.insert(m + 1, String::new());
+        lines.insert(m + 2, String::new());
+    }
+
+    lines
+}
