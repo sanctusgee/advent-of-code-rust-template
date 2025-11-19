@@ -6,7 +6,7 @@
 
 # Advent of Code Rust Template
 
-This repository provides a structured [![Rust workspace]](https://doc.rust-lang.org/cargo/reference/workspaces.html) for solving Advent of Code puzzles.  
+This repository provides a structured [[Rust workspace]](https://doc.rust-lang.org/cargo/reference/workspaces.html) for solving Advent of Code puzzles.  
 The layout is designed to stay manageable across all AoC days while keeping the code easy to navigate and extend.
 
 ---
