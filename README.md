@@ -31,7 +31,7 @@ The layout is designed to stay manageable across all AoC days while keeping the 
     benches/
     └── all_days.rs           # Criterion benchmarks
 
-If you’ve worked with Rust workspaces before, the overall layout should feel straightforward.
+The template consists of just nine Rust files split across a small Cargo workspace.
 
 ---
 
