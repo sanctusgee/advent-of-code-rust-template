@@ -3,9 +3,6 @@
 [![Use this template](https://img.shields.io/badge/use-this%20template-blue?logo=github)](https://github.com/sanctusgee/advent-of-code-rust-template/generate)
 [![Rust](https://img.shields.io/badge/rust-1.75%2B-orange.svg)](https://www.rust-lang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-![GitHub stars](https://img.shields.io/github/stars/sanctusgee/advent-of-code-rust-template?style=social)
-![GitHub forks](https://img.shields.io/github/forks/sanctusgee/advent-of-code-rust-template?style=social)
-![GitHub last commit](https://img.shields.io/github/last-commit/sanctusgee/advent-of-code-rust-template)
 
 A scalable, high-performance Advent of Code solution framework built with Rust workspaces. This template provides everything you need to tackle any year's puzzles with a clean architecture, automatic input downloading, benchmarking, and more.
 
