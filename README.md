@@ -4,20 +4,19 @@
 [![Rust](https://img.shields.io/badge/rust-1.75%2B-orange.svg)](https://www.rust-lang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A scalable, high-performance Advent of Code solution framework built with Rust workspaces. This template provides everything you need to tackle any year's puzzles with a clean architecture, automatic input downloading, benchmarking, and more.
+After finishing AoC 2024, I turned my solution setup into a reusable template. Most templates are either too minimal or overly complex. This one uses Rust workspaces, auto-downloads inputs, generates new days with one command, and includes benchmarking. Just 9 files total.
 
 
-## What's Included
+## What you get
 
-- Year-agnostic template - Works for 2024, 2025, and beyond
-- Minimal codebase - Just 9 Rust files to get you started
-- Example solution - year2024/day01 as a reference (removable)
-- Automatic input downloading - No manual copy-paste
-- Template generator - Create new days with one command
-- Benchmarking suite - Measure and optimize performance
-- Utility functions - Common parsing and input handling
-- Workspace architecture - Fast incremental builds
-- Zero clippy warnings - Clean, idiomatic Rust code
+- 9 Rust files (no bloat)
+- Works for any year (2024, 2025, whatever)
+- One example solution to see the pattern
+- Auto-downloads puzzle inputs
+- One command to create new days
+- Criterion benchmarks included
+- Workspace setup for fast builds
+- Passes clippy with zero warnings
 
 ## Quick Start
 
@@ -121,14 +120,17 @@ advent-of-code/
         └── dayXX.txt
 ```
 
-### Why This Architecture?
+### Why workspace architecture?
 
-- **Scalability**: Solutions as a library scale indefinitely - add years without restructuring
-- **Build Performance**: Workspace enables parallel compilation and incremental builds
-- **Flexibility**: Run via CLI, benchmarks, or import as library
-- **CI/CD Efficiency**: Test/bench only what changed
-- **Separation of Concerns**: Logic (lib) vs CLI (bin) vs performance (bench)
-- **Year-Agnostic**: Template works for any year - 2024, 2025, 2030, or beyond
+Take a look at The Rust Book at https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html
+
+The workspace setup gives you a few things:
+
+- Add new years without restructuring everything
+- Fast incremental builds (only changed files recompile)
+- Run solutions from CLI, benchmark them, or import as a library
+- Solutions live in a library, CLI is just a thin wrapper
+- Works for any AoC year (2024, 2025, whenever)
 
 ### Minimal Codebase - Just 9 Files
 
