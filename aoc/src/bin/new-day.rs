@@ -45,11 +45,7 @@ fn main() -> Result<()> {
     }
 
     // Write a minimal day stub
-    fs::write(&solution_path, build_day_stub())
-        .with_context(|| format!("failed to write {}", solution_path.display()))?;
-
-    // Write a minimal day stub with empty input file
-    fs::write(&solution_path, build_day_stub())
+    fs::write(&solution_path, build_day_stub(year, day))
         .with_context(|| format!("failed to write {}", solution_path.display()))?;
 
     // Create input directory and empty input file for the new day
@@ -69,7 +65,7 @@ fn main() -> Result<()> {
     // User guidance
     println!("Created template for year {} day {}", year, day);
     println!("\nNext steps:");
-    println!("  1. Add input or Download to: input/year{}/day{:02}.txt", year, day);
+    println!("  1. Download input or Copy/paste input to: input/year{}/day{:02}.txt", year, day);
     println!(
         "  2. Implement solution in: aoc-lib/src/year{}/day{:02}.rs",
         year, day
@@ -152,17 +148,41 @@ fn build_year_scaffold(year: u16, day: u8) -> String {
 }
 
 // Minimal content for a new `dayDD.rs` file
-fn build_day_stub() -> String {
-    "// Auto-generated day stub. No edit required\n\
-     use anyhow::Result;\n\
-     \n\
-     pub fn solve() -> Result<()> {\n\
-     \t// Do not delete this function. solve() is required\n\
-     \t// TODO: implement. Add your solutions here, or call other functions that implement it\n\
-     \tOk(())\n\
-     }\n"
-        .to_string()
+fn build_day_stub(year: u16, day: u8) -> String {
+    format!(
+        "// Auto-generated day stub. Do not delete solve()\n\
+         // Add you code to solve(), or implement other fn and call from solve().\n\n\
+         use anyhow::Result;\n\
+         use crate::utils;\n\
+         \n\n\
+         // Example template.\n\n\
+         pub fn solve() -> Result<()> {{\n\
+         // Load your input file.\n\
+         \tlet input = utils::load_input({}, {})?;\n\
+         \n\
+         \tlet part1 = solve_part1(&input)?;\n\
+         \tlet part2 = solve_part2(&input)?;\n\
+         \n\
+         \tprintln!(\"Day {} / Year {}\");\n\
+         \tprintln!(\"Part 1: {{}}\", part1);\n\
+         \tprintln!(\"Part 2: {{}}\", part2);\n\
+         \n\
+         \tOk(())\n\
+         }}\n\
+         \n\
+        // Rename _input variable in fn signature back to input after implementing the solution\n\
+         fn solve_part1(_input: &str) -> Result<impl std::fmt::Display> {{\n\
+         \tOk(0)\n\
+         }}\n\
+         \n\
+        // Rename _input variable in fn signature back to input after implementing the solution\n\
+         fn solve_part2(_input: &str) -> Result<impl std::fmt::Display> {{\n\
+         \tOk(0)\n\
+         }}\n",
+        year, day, day, year
+    )
 }
+
 
 // Integrate the new day into an existing `yearYYYY/mod.rs`
 fn integrate_day_into_year_file(src: &str, day: u8) -> Result<String> {

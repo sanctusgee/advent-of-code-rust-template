@@ -34,8 +34,8 @@ The layout is designed to stay manageable across all AoC days while keeping the 
     └── all_days.rs               # Criterion benchmarks
     input/
     └── year2024/
-        └── day01/                # Generated input folder. Step 2 below
-            └── input.txt         # Downloaded input file. Step 2 below
+        └── day01/                # Generated input folder. Step 4 below
+            └── input.txt         # Downloaded input file. Step 4 below
 
 ```
 
@@ -117,9 +117,9 @@ The input files are ignored by Git by default so you won’t commit personal dat
         
     `export AOC_SESSION="paste_the_value_here"`
 
-Example:
-        
+Example: 
     `export AOC_SESSION="3451b2c3d4e5f1234abcd554321abc123def"`
+
 Keep this value private and **do not** commit it.
         
 
