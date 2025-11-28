@@ -15,12 +15,11 @@ The layout is designed to stay manageable across all AoC days while keeping the 
     aoc-lib/
     └── src/
         ├── lib.rs                # Year/day registry
-        ├── year2024.rs           # Example year module
-        ├── year20XX.rs           # Generated when you create new days. Step 1 below
         ├── year2024/
         │   └── day01.rs          # Example solution
         ├── year20XX/
         │   └── day01.rs          # Generated when you create new days. Step 1 below
+        │   └── mod.rs             # Generated when you create new days. Step 1 below
         └── utils/
             ├── mod.rs
             ├── input.rs          # Local + remote input loading
@@ -33,14 +32,12 @@ The layout is designed to stay manageable across all AoC days while keeping the 
     benches/
     └── all_days.rs               # Criterion benchmarks
     input/
-    └── year2024/
-        └── day01/                # Generated input folder. Step 4 below
-            └── input.txt         # Downloaded input file. Step 4 below
+    └── year2024/                 # Generated input folder. Step 4 below
+        └── day01.txt             # Downloaded input file. Step 4 below
+        └── ...                   # Additional input files per day
 
 ```
 
-
-The template consists of nine Rust files split across a small Cargo workspace.
 
 ---
 

@@ -11,9 +11,23 @@ pub fn get_input_path(year: u16, day: u8) -> PathBuf {
 // Load input file as a single string
 pub fn load_input(year: u16, day: u8) -> Result<String> {
     let path = get_input_path(year, day);
+
+    if !path.exists() {
+        return Err(anyhow!(
+            "Input file not found - {}\n\n\
+            To download it automatically, run:\n    \
+            cargo run --bin aoc download {} {}\n\n\
+            Or create the file manually if you want to paste input by hand.\n\
+            An empty input file also works and allows the command to run successfully.",
+            path.display(),
+            year,
+            day
+        ));
+    }
     std::fs::read_to_string(&path)
         .with_context(|| format!("Failed to read input file: {}", path.display()))
 }
+
 
 // Load input file as lines
 pub fn load_input_lines(year: u16, day: u8) -> Result<Vec<String>> {
