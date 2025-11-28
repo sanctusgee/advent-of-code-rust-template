@@ -64,7 +64,7 @@ impl SolutionOutput {
     }
 }
 
-/// Helper macro for timing a block of code
+// Helper macro for timing a block of code
 #[macro_export]
 macro_rules! timed {
     ($expr:expr) => {{

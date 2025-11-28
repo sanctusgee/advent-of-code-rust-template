@@ -53,6 +53,10 @@ fn main() -> Result<()> {
 }
 
 fn run_solution(year: u16, day: u8) -> Result<()> {
+    // ToDo: hardcoded: Starting 2025, AoC is now only 12 days
+    //       intentionally leaving range of 1 to 25 so we can still use code for previous years
+    //     **  In future, I'll figure out a way to create a dynamic variable
+    //      that is set as part of the Day 1 template creation
     if !(1..=25).contains(&day) {
         anyhow::bail!("Day must be between 1 and 25");
     }
@@ -111,6 +115,10 @@ fn list_solutions(year_filter: Option<u16>) -> Result<()> {
 }
 
 fn create_template(year: u16, day: u8) -> Result<()> {
+    // ToDo: hardcoded: Starting 2025, AoC is now only 12 days
+    //       intentionally leaving range of 1 to 25 so we can still use code for previous years
+    //     **  In future, I'll figure out a way to create a dynamic variable
+    //      that is set as part of the Day 1 template creation
     if !(1..=25).contains(&day) {
         anyhow::bail!("Day must be between 1 and 25");
     }
@@ -130,6 +138,10 @@ fn create_template(year: u16, day: u8) -> Result<()> {
 }
 
 fn download_input(year: u16, day: u8) -> Result<()> {
+    // ToDo: hardcoded: Starting 2025, AoC is now only 12 days
+    //       intentionally leaving range of 1 to 25 so we can still use code for previous years
+    //     **  In future, I'll figure out a way to create a dynamic variable
+    //      that is set as part of the Day 1 template creation
     if !(1..=25).contains(&day) {
         anyhow::bail!("Day must be between 1 and 25");
     }

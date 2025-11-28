@@ -1,32 +1,44 @@
-use anyhow::{Context, Result};
+// `aoc-lib/src/utils/input.rs`
+
+use anyhow::{anyhow, Context, Result};
 use std::path::PathBuf;
 
-/// Get the path to an input file for a specific year and day
+// Get the path to an input file for a specific year and day
 pub fn get_input_path(year: u16, day: u8) -> PathBuf {
     PathBuf::from(format!("input/year{}/day{:02}.txt", year, day))
 }
 
-/// Load input file as a single string
+// Load input file as a single string
 pub fn load_input(year: u16, day: u8) -> Result<String> {
     let path = get_input_path(year, day);
     std::fs::read_to_string(&path)
         .with_context(|| format!("Failed to read input file: {}", path.display()))
 }
 
-/// Load input file as lines
+// Load input file as lines
 pub fn load_input_lines(year: u16, day: u8) -> Result<Vec<String>> {
     let content = load_input(year, day)?;
     Ok(content.lines().map(String::from).collect())
 }
 
 /// Download input from Advent of Code website
-/// Requires AOC_SESSION environment variable to be set
+/// Requires AOC_SESSION env var; accepts either raw token or "session=<token>"
 pub fn download_input(year: u16, day: u8) -> Result<String> {
+    // basic day guard
+    if day == 0 || day > 25 {
+        return Err(anyhow!("Day must be between 1 and 25"));
+    }
+
     let session = std::env::var("AOC_SESSION")
         .context("AOC_SESSION environment variable not set")?;
+    // allow both formats
+    let session = session.strip_prefix("session=").unwrap_or(&session);
 
     let url = format!("https://adventofcode.com/{}/day/{}/input", year, day);
-    let client = reqwest::blocking::Client::new();
+    let client = reqwest::blocking::Client::builder()
+        .user_agent("github.com/sanctusgee/aoc-rust (Rust reqwest)")
+        .build()
+        .context("Failed to build HTTP client")?;
 
     let response = client
         .get(&url)
@@ -38,7 +50,16 @@ pub fn download_input(year: u16, day: u8) -> Result<String> {
         anyhow::bail!("Failed to download input: HTTP {}", response.status());
     }
 
-    response.text().context("Failed to read response text")
+    let text = response.text().context("Failed to read response text")?;
+
+    // detect empty or HTML login page
+    if text.trim().is_empty() || text.trim_start().starts_with("<!DOCTYPE") {
+        anyhow::bail!(
+            "Downloaded empty or HTML content. Verify AOC_SESSION token and puzzle availability."
+        );
+    }
+
+    Ok(text)
 }
 
 /// Download and cache input file
@@ -99,7 +120,6 @@ where
         })
         .collect()
 }
-
 /// Parse lines of whitespace-separated values
 pub fn parse_lines<T>(lines: &[String]) -> Result<Vec<Vec<T>>>
 where

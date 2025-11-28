@@ -1,5 +1,7 @@
 // file: src/year2024/day01.rs
 
+// my actual solution code for day 1, year 2024
+
 use crate::utils;
 use anyhow::Result;
 use std::collections::HashMap;

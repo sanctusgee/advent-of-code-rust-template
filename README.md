@@ -11,25 +11,36 @@ The layout is designed to stay manageable across all AoC days while keeping the 
 
 ## Workspace Structure
 
+```
     aoc-lib/
-    ├── lib.rs                # Year/day registry
-    ├── year2024.rs           # Example year module
-    ├── year2024/
-    │   └── day01.rs          # Example solution
-    └── utils/
-        ├── mod.rs
-        ├── input.rs          # Local + remote input loading
-        └── output.rs         # Formatting helpers
-
+    └── src/
+        ├── lib.rs                # Year/day registry
+        ├── year2024.rs           # Example year module
+        ├── year20XX.rs           # Generated when you create new days. Step 1 below
+        ├── year2024/
+        │   └── day01.rs          # Example solution
+        ├── year20XX/
+        │   └── day01.rs          # Generated when you create new days. Step 1 below
+        └── utils/
+            ├── mod.rs
+            ├── input.rs          # Local + remote input loading
+            └── output.rs         # Formatting helpers
     aoc/
-    ├── main.rs               # Run/list/download commands
-    └── bin/
-        └── new-day.rs        # Generates year/day modules (prints lib.rs updates)
-
+    └── src/
+        ├── main.rs               # Run/list/download commands
+        └── bin/
+            └── new-day.rs        # Generates year/day modules
     benches/
-    └── all_days.rs           # Criterion benchmarks
+    └── all_days.rs               # Criterion benchmarks
+    input/
+    └── year2024/
+        └── day01/                # Generated input folder. Step 2 below
+            └── input.txt         # Downloaded input file. Step 2 below
 
-The template consists of just nine Rust files split across a small Cargo workspace.
+```
+
+
+The template consists of nine Rust files split across a small Cargo workspace.
 
 ---
 
@@ -38,21 +49,6 @@ The template consists of just nine Rust files split across a small Cargo workspa
 - A Rust toolchain (`rustup` recommended)  
 - An Advent of Code account  
 - Your personal AoC session cookie (`session=...`)  
-
-### How to get your AoC session cookie
-
-1. Log in at https://adventofcode.com  
-2. Open developer tools → Network  
-3. Refresh the page  
-4. Select any request to `adventofcode.com`  
-5. Look at the `cookie` header  
-6. Copy the value that begins with `session=`  
-
-Export it:
-
-    export AOC_SESSION="paste_the_value_here"
-
-Keep this value private and **do not** commit it.
 
 ---
 
@@ -66,48 +62,74 @@ After the initial build, you can start generating new years and days.
 
 ---
 
-## Create a New Year / Day
 
-### Day 1 (for example, 2025)
+### 1. First time: create Year module + Day 1 module
 
-    cargo run - bin new-day 2025 1
+**Always** start by creating Day 1 for a new year. For example, year 2025 day 1
+
+    cargo run --bin new-day 2025 1
 
 This script:
 
 - creates `aoc-lib/src/year2025.rs` if it doesn’t exist  
 - creates `aoc-lib/src/year2025/day01.rs`  
 - creates `input/2025/day01/`  
-- prints the exact lines to add to `aoc-lib/src/lib.rs`  
+- prints the exact instructions of what to add to `aoc-lib/src/lib.rs`  
 
-Updating `lib.rs` is a manual step so you can control ordering and visibility.
+### 2. Update `lib.rs` 
+ This is a manual **one-time setup step per year**. Intentionally not automated to avoid accidental overwrites.
 
-### Next day
+### 3. Create Additional Days (as needed)
 
-    cargo run - bin new-day 2025 2 // change the day value as needed
+    cargo run --bin new-day 2025 2 // change the day value as needed
 
 Use the same command pattern for each new day.
 
 ---
 
-## Download Inputs
+### 4. Download Inputs from AoC
 
-    cargo run - bin aoc download 2025 1 // change the day value as needed
+    cargo run --bin aoc download 2025 1 // change the day value as needed
 
 Inputs are stored under:
 
-    input/<year>/<day>/input.txt
+    input/<yearYYYY>/<dayXX>.txt  
 
-They’re ignored by Git by default so you won’t commit personal data.
+_where: YYYY is the four-digit year and 
+        XX represents the zero-padded day number, eg 01, 02, ..., N_
+
+The input files are ignored by Git by default so you won’t commit personal data.
 
 ---
 
-## Run a Solution
+**How to get your AoC session cookie (Required for input downloads)**
+        
+- Go to https://adventofcode.com and make sure you are logged in.
 
-    cargo run - bin aoc run 2025 1 // change the day value as needed
+- Open your browser’s Developer Tools (usually right-click --> Inspect / Inspect Element).
+- In Developer Tools, select the Network tab.
+- Refresh the page — you should now see network requests appearing.
+- Click any request whose domain is adventofcode.com.
+- In the request details, find the Headers section.
+- Look for the cookie header.
+- Copy the part that starts with `session=` 
+- Next, export the session cookie as an environment variable with the command:
+        
+    `export AOC_SESSION="paste_the_value_here"`
 
-List available solvers:
+Example:
+        
+    `export AOC_SESSION="3451b2c3d4e5f1234abcd554321abc123def"`
+Keep this value private and **do not** commit it.
+        
 
-    cargo run - bin aoc list
+### 5. Run a Solution
+
+    cargo run --bin aoc run 2025 1 // change the day value as needed
+
+### (Optional):  List available solvers:
+
+    cargo run --bin aoc list
 
 ---
 
@@ -139,7 +161,7 @@ Each new day includes the same starter structure so you can focus directly on th
      Ok(0)
     }
 
-The only convention is that each day exposes a `solve()` function returning `anyhow::Result<()>`.
+You can change this file as needed. The only required convention is that each day exposes a `solve()` function returning `anyhow::Result<()>`.
 
 ---
 

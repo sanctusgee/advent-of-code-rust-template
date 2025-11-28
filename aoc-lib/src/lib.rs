@@ -1,60 +1,53 @@
-pub mod utils;
+// aoc-lib/src/lib.rs
 
-// Year modules - add your years here as you implement them
-// Example: pub mod year2024;
+// For every new year created you must manually update this file in 4 locations:
+// 1) Add `pub mod yearYYYY;`
+// 2) Add year YYYY arm in `SolutionRegistry::get_solver(...)`
+// 3) Add year YYYY in `SolutionRegistry::available_years()`
+// 4) Add year YYYY arm in `SolutionRegistry::available_days(year)`
+// These are one-time updates per year
+//     ** I may automate this in the future;
+
+pub mod utils;
 pub mod year2024;
 
 use anyhow::Result;
 
-/// Type alias for solver functions
-pub type SolverFn = fn() -> Result<()>;
-
-/// Trait that all solution modules must implement
-pub trait Solution {
-    fn solve() -> Result<()>;
-}
-
-/// Registry of all available solutions
 pub struct SolutionRegistry;
 
+// I created Helper function here to simplify preceding code:
+// :this convert `DAYS` entries like ("01", solver) to Vec<u8>
+fn days_to_u8(days: &[(&'static str, fn() -> anyhow::Result<()> )]) -> Vec<u8> {
+    days.iter().filter_map(|(d, _)| d.parse::<u8>().ok()).collect()
+}
+
+// Helper: find solver for a given day in a year's `DAYS`
+fn find_solver(days: &[(&'static str, fn() -> Result<()> )], day: u8) -> Option<fn() -> Result<()>> {
+    let day_str = day.to_string();
+    days.iter().find(|(d, _)| *d == day_str).map(|(_, s)| *s)
+}
+
 impl SolutionRegistry {
-    /// Get solver function for a specific year and day
-    pub fn get_solver(year: u16, day: u8) -> Option<SolverFn> {
+    pub fn get_solver(year: u16, day: u8) -> Option<fn() -> Result<()>> {
         match year {
-            2024 => Self::get_year_solver(year2024::DAYS, day),
-            // Add more years here:
-            // 2025 => Self::get_year_solver(year2025::DAYS, day),
+            // Manually add each new year here
+            2024 => find_solver(&year2024::DAYS, day),
+            // 2035 => find_solver(&year2035::DAYS, day),
             _ => None,
         }
     }
 
-    /// Generic helper to get solver from a year's DAYS array
-    fn get_year_solver(days: &[(&str, SolverFn)], day: u8) -> Option<SolverFn> {
-        days.iter()
-            .find(|(d, _)| d.parse::<u8>().ok() == Some(day))
-            .map(|(_, solver)| *solver)
-    }
-
-    /// List all available years
     pub fn available_years() -> Vec<u16> {
-        vec![
-            2024,
-            // Add more years here as you implement them:
-            // 2025,
-        ]
+        vec![2024] // Manually update this list for each new year added
+        // example is vec![2024, 2015, 2026, 2035, ...] // Ordering is not important
     }
 
-    /// List all available days for a year
     pub fn available_days(year: u16) -> Vec<u8> {
-        let days = match year {
-            2024 => &year2024::DAYS,
-            // Add more years here:
-            // 2025 => &year2025::DAYS,
-            _ => return vec![],
-        };
-
-        days.iter()
-            .filter_map(|(d, _)| d.parse().ok())
-            .collect()
+        match year {
+            // Manually add each new year here. Ordering nice but not important
+            2024 => days_to_u8(&year2024::DAYS),
+            // 2035 => days_to_u8(&year2035::DAYS),
+            _ => vec![],
+        }
     }
 }
