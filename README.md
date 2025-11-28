@@ -58,7 +58,7 @@ The template consists of nine Rust files split across a small Cargo workspace.
     cd advent-of-code-rust-template
     cargo build
 
-After the initial build, you can start generating new years and days.
+After the initial build, you can now start generating new years and days.
 
 ---
 
