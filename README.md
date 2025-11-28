@@ -17,6 +17,7 @@ The layout is designed to stay manageable across all AoC days while keeping the 
         ├── lib.rs                # Year/day registry
         ├── year2024/
         │   └── day01.rs          # Example solution
+        │   └── mod.rs             # Generated when you create new days. Step 1 below
         ├── year20XX/
         │   └── day01.rs          # Generated when you create new days. Step 1 below
         │   └── mod.rs             # Generated when you create new days. Step 1 below
