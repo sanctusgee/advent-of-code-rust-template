@@ -7,7 +7,7 @@
 
 A Rust workspace for Advent of Code that stays sane across **all days** and **multiple years**.
 
-- One workspace for every year (2015–202x).
+- One workspace for every year (2015–20xx).
 - Automatic registry: no more manual `lib.rs` edits when you add years/days.
 - Simple CLI for scaffolding, running, listing, and downloading puzzles.
 - Self-healing registry if you move/delete files.
