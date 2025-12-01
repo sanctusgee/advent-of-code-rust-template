@@ -17,8 +17,7 @@ pub fn load_input(year: u16, day: u8) -> Result<String> {
             "Input file not found - {}\n\n\
             To download it automatically, run:\n    \
             cargo run --bin aoc download {} {}\n\n\
-            Or create the file manually if you want to paste input by hand.\n\
-            An empty input file also works and allows the command to run successfully.",
+            Or create the file manually if you want to paste input by hand.",
             path.display(),
             year,
             day

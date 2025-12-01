@@ -53,16 +53,10 @@ fn main() -> Result<()> {
     fs::write(&solution_path, build_day_stub(year, day))
         .with_context(|| format!("failed to write {}", solution_path.display()))?;
 
-    // Create input directory and empty input file for the new day
+    // Create input directory (but not the day file - let download command handle that)
     let input_dir = PathBuf::from(format!("input/year{}", year));
     fs::create_dir_all(&input_dir)
         .with_context(|| format!("failed to create input directory {}", input_dir.display()))?;
-
-    let input_path = input_dir.join(format!("day{:02}.txt", day));
-    if !input_path.exists() {
-        fs::write(&input_path, "")
-            .with_context(|| format!("failed to create input file {}", input_path.display()))?;
-    }
 
     // Register in `yearYYYY/mod.rs`
     register_new_day(year, day)?;
