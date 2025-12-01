@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 
-A Rust workspace for Advent of Code that stays sane across **all days** and **multiple years**.
+A Rust template for Advent of Code that stays sane across **all days** and **multiple years**.
 
 - One workspace for every year (2015–20xx).
 - Automatic registry: no more manual `lib.rs` edits when you add years/days.
@@ -54,7 +54,7 @@ This will:
 
 - Regenerate `aoc-lib/src/registry_generated.rs` with routing logic for existing years/days.
 
-- Create a blank `input/year2025/day01.txt` file as a placeholder.
+- Create a `input/year2025` directory as a placeholder.
 
 
 ### Subequent days can be created with:
@@ -131,7 +131,7 @@ When you run `cargo run --bin new-day 2025 1`, it:
 2. Updates `aoc-lib/src/year2025/mod.rs` to register the new day
 3. Adds `pub mod year2025;` to `aoc-lib/src/lib.rs` (if it's a new year)
 4. Regenerates `aoc-lib/src/registry_generated.rs` with routing logic
-5. Creates `input/year2025/day01.txt` placeholder
+5. Creates `input/year2025` directory as a placeholder.
 
 No manual editing required. The registry stays in sync with your file structure.
 
