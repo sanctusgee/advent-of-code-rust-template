@@ -232,22 +232,6 @@ Input loading, error handling, and output formatting are already wired up. Just 
 
 ---
 
-## Keeping Your Fork Updated
-
-To sync with the latest template improvements:
-
-```bash
-# One-time setup
-git remote add upstream git@github.com:sanctusgee/advent-of-code-rust-template.git
-
-# Regular updates eg on new template releases
-git fetch upstream
-git merge upstream/main
-git push origin main
-```
-
---
-
 ## Testing & Benchmarking
 
 ```bash
