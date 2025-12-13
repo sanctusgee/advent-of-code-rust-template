@@ -5,9 +5,9 @@ use anyhow::Result;
 
 mod day01;
 
+type DayEntry = (&'static str, fn() -> Result<()>);
 
-
-pub const DAYS: &[(&str, fn() -> Result<()>)] =
+pub const DAYS: &[DayEntry] =
 &[
     ("1", day01::solve),
 ];

@@ -26,8 +26,8 @@ fn find_solver(days: &[DayEntry], day: u8) -> Option<fn() -> Result<()>> {
 impl SolutionRegistry {
     pub fn get_solver(year: u16, day: u8) -> Option<fn() -> Result<()>> {
         match year {
-            2024 => find_solver(&year2024::DAYS, day),
-            2025 => find_solver(&year2025::DAYS, day),
+            2024 => find_solver(year2024::DAYS, day),
+            2025 => find_solver(year2025::DAYS, day),
             _ => None,
         }
     }
@@ -38,8 +38,8 @@ impl SolutionRegistry {
 
     pub fn available_days(year: u16) -> Vec<u8> {
         match year {
-            2024 => days_to_u8(&year2024::DAYS),
-            2025 => days_to_u8(&year2025::DAYS),
+            2024 => days_to_u8(year2024::DAYS),
+            2025 => days_to_u8(year2025::DAYS),
             _ => vec![],
         }
     }

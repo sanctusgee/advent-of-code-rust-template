@@ -7,7 +7,7 @@
 
 A Rust template for Advent of Code that stays sane across **all days** and **multiple years**.
 
-- One workspace for every year (2015–20xx).
+- One workspace for every year (2015-20xx).
 - Automatic registry: no more manual `lib.rs` edits when you add years/days.
 - Simple CLI for scaffolding, running, listing, and downloading puzzles.
 - Self-healing registry if you move/delete files.
@@ -56,9 +56,11 @@ cargo run --bin new-day 2025 3 // creates day 3 module for 2025
 ...
 ```
 
-### Download input (requires AOC_SESSION env var)
+### Download input (requires AOC_SESSION and AOC_USER_AGENT env vars)
 
-To download inputs, you need your AoC session cookie:
+To download inputs, you need two environment variables:
+
+#### 1. AOC_SESSION - Your session cookie
 
 - Log in to [adventofcode.com](https://adventofcode.com)
 - Open DevTools (varies by browser, usually right-click -> Inspect or Inspect Element)
@@ -76,6 +78,24 @@ Example:
     `export AOC_SESSION="3451b2c3d4e5f1234abcd554321abc123def"`
 
 Don't commit this value.
+
+#### 2. AOC_USER_AGENT - Your identification
+
+To be a good internet citizen and help website admins contact you if needed, set a User-Agent that identifies you:
+
+```bash
+export AOC_USER_AGENT="github.com/yourname/your-repo (your@email.com)"
+```
+
+Example:
+```bash
+export AOC_USER_AGENT="github.com/alice/aoc-solutions (alice@example.com)"
+```
+
+This helps prevent rate limiting issues and follows best practices for automated requests.
+
+For reference: see https://www.reddit.com/r/adventofcode/comments/1pa472d/reminder_please_throttle_your_aoc_traffic/
+
 
 #### Download input for a specific day:
 `cargo run --bin aoc download 2025 1`

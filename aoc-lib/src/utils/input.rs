@@ -47,9 +47,15 @@ pub fn download_input(year: u16, day: u8) -> Result<String> {
     // allow both formats
     let session = session.strip_prefix("session=").unwrap_or(&session);
 
+    let user_agent = std::env::var("AOC_USER_AGENT")
+        .context("AOC_USER_AGENT environment variable not set.\n\
+            Please set it to identify yourself, e.g.:\n    \
+            export AOC_USER_AGENT=\"github.com/yourname/your-repo (contact@email.com)\"\n\n\
+            This helps website admins contact you if there are issues with your requests.")?;
+
     let url = format!("https://adventofcode.com/{}/day/{}/input", year, day);
     let client = reqwest::blocking::Client::builder()
-        .user_agent("github.com/sanctusgee/aoc-rust (Rust reqwest)")
+        .user_agent(user_agent)
         .build()
         .context("Failed to build HTTP client")?;
 

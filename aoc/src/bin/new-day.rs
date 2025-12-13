@@ -137,8 +137,9 @@ fn build_year_scaffold(year: u16, day: u8) -> String {
          \n\
          {day_mod}\n\
          \n\
+         type DayEntry = (&'static str, fn() -> Result<()>);\n\
          \n\
-         pub const DAYS: &[(&str, fn() -> Result<()>)] =\n\
+         pub const DAYS: &[DayEntry] =\n\
          &[\n\
          {entry}\n\
          ];\n"

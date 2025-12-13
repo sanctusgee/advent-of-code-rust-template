@@ -7,7 +7,7 @@ target/
 # MSVC Windows builds of rustc generate these, which store debugging information
 *.pdb
 
-# Environment variables (contains sensitive data like AOC_SESSION)
+# Environment variables (contains sensitive data like AOC_SESSION and AOC_USER_AGENT)
 .env
 
 # Advent of Code inputs (personal puzzle inputs should not be shared)

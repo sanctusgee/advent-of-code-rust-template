@@ -156,7 +156,7 @@ fn build_registry_file(years: &[u16]) -> String {
     output.push_str("    pub fn get_solver(year: u16, day: u8) -> Option<fn() -> Result<()>> {\n");
     output.push_str("        match year {\n");
     for year in years {
-        output.push_str(&format!("            {} => find_solver(&year{}::DAYS, day),\n", year, year));
+        output.push_str(&format!("            {} => find_solver(year{}::DAYS, day),\n", year, year));
     }
     output.push_str("            _ => None,\n");
     output.push_str("        }\n");
@@ -171,7 +171,7 @@ fn build_registry_file(years: &[u16]) -> String {
     output.push_str("    pub fn available_days(year: u16) -> Vec<u8> {\n");
     output.push_str("        match year {\n");
     for year in years {
-        output.push_str(&format!("            {} => days_to_u8(&year{}::DAYS),\n", year, year));
+        output.push_str(&format!("            {} => days_to_u8(year{}::DAYS),\n", year, year));
     }
     output.push_str("            _ => vec![],\n");
     output.push_str("        }\n");
