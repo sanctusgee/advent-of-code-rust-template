@@ -174,7 +174,6 @@ Use it when:
 This fixes `lib.rs` and `registry_generated.rs` to match what actually exists on disk.
 
 
-
 ## Generated Solution Template
 
 Each day is scaffolded with this structure:
@@ -232,6 +231,23 @@ cargo run --bin registry-tool
 Input loading, error handling, and output formatting are already wired up. Just implement the two solver functions.
 
 ---
+
+## Keeping Your Fork Updated
+
+To sync with the latest template improvements:
+
+```bash
+# One-time setup
+git remote add upstream git@github.com:sanctusgee/advent-of-code-rust-template.git
+
+# Regular updates eg on new template releases
+git fetch upstream
+git checkout main
+git merge upstream/main
+git push origin main
+```
+
+--
 
 ## Testing & Benchmarking
 
