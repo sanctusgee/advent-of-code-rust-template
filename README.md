@@ -242,7 +242,6 @@ git remote add upstream git@github.com:sanctusgee/advent-of-code-rust-template.g
 
 # Regular updates eg on new template releases
 git fetch upstream
-git checkout main
 git merge upstream/main
 git push origin main
 ```
